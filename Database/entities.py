@@ -1,6 +1,4 @@
-import aes_pkcs5
-from pymongo import MongoClient
-import hashlib
+from cryptography.fernet import Fernet
 
 class User:
     def __init__(self, nickname: str, email: str, password: str):
@@ -16,7 +14,6 @@ class Message:
         self.nickname_from = nickname_from
 
     def to_dict(self):
-        """Returns a dictionary of the message."""
         return {
             "nickname_from": self.nickname_from,
             "nickname_to": self.nickname_to,
@@ -24,19 +21,13 @@ class Message:
         }
 
     @staticmethod
-    def encrypt_message(key: str, message: str) -> str:
-
-        key_bytes = hashlib.sha256(key.encode()).digest()
-        encrypted_message = aes_pkcs5.encrypt(message.encode('utf-8'))
-        return encrypted_message.hex()
+    def encrypt_message(message, key):
+        fernet = Fernet(key)
+        encrypted_message = fernet.encrypt(message.encode())
+        return encrypted_message
 
     @staticmethod
-    def decrypt_message(key: str, encrypted_message: str) -> str:
-
-        key_bytes = hashlib.sha256(key.encode()).digest()
-        encrypted_bytes = bytes.fromhex(encrypted_message)
-        decrypted_message = aes_pkcs5.decrypt(key_bytes, encrypted_bytes)
-        return decrypted_message.decode('utf-8')
-
-
-
+    def decrypt_message(encrypted_message, key):
+        fernet = Fernet(key)
+        decrypted_message = fernet.decrypt(encrypted_message).decode()
+        return decrypted_message
