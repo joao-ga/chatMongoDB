@@ -39,8 +39,6 @@ class Operation:
         key = self.derive_key_from_password(password, salt)
         encrypted_message = Message.encrypt_message(message, key)
         salt64 = urlsafe_b64encode(salt).decode('utf-8')
-        print(salt64, ' salt64')
-        print(encrypted_message, ' encrypted_message')
 
         message_document = {
             'from': sender,
@@ -49,8 +47,6 @@ class Operation:
             'salt': salt64
         }
         self.messages_collection.insert_one(message_document)
-        print(f"Mensagem de {sender} para {recipient} enviada e criptografada com sucesso!")
-        print("--------------------------------------------------------------------------------")
 
     def check_received_messages(self, user_email, password):
         messages = self.messages_collection.find({'to': user_email})

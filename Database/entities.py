@@ -31,7 +31,6 @@ class Message:
     @staticmethod
     def decrypt_message(encrypted_message, key):
         fernet = Fernet(key)
-        # Decodifica a mensagem antes de tentar descriptografar
         encrypted_message = urlsafe_b64decode(encrypted_message.encode('utf-8'))
         decrypted_message = fernet.decrypt(encrypted_message).decode()
         return decrypted_message
