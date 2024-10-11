@@ -6,11 +6,32 @@ def chat(operation, user_email, password):
     message = input("Digite a mensagem: ")
     operation.send_message_to_db(user_email, recipient, message, password)
 
+def ver_msg(operation, user_email, password):
+    operation.check_received_messages(user_email, password)
+
+def menu():
+    print("-----Menu-----")
+    print("1. Enviar Mensagem")
+    print("2. Ler Mensagem")
+    print("3. Sair")
+    print("---------------")
+    escolha = input("Escolha uma opção: ")
+    return escolha
+
 if __name__ == '__main__':
+
     operation = Operation()
 
-    # Realiza o login do usuário
-    email, password = operation.login()
+    email, password = operation.login() #login usuario
 
-    # Inicia o chat
-    chat(operation, email, password)
+    while True:
+        escolha = menu()
+        if escolha == '1':
+            chat(operation, email, password)  #envia msg
+        elif escolha == '2':
+            ver_msg(operation, email, password) #ler msg enviadas
+        elif escolha == '3':
+            print("Saindo do programa...")
+            break
+        else:
+            print("Opção inválida! Tente novamente.")

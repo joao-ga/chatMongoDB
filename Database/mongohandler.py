@@ -1,5 +1,6 @@
 import os
 from base64 import urlsafe_b64encode, urlsafe_b64decode
+from cryptography.fernet import Fernet
 from pymongo import MongoClient
 from Database.entities import Message
 from Database.utils import derive_key_from_password
@@ -12,6 +13,11 @@ class Operation:
         self.db = self.client["chatMongo"]
         self.users_collection = self.db.Users
         self.messages_collection = self.db.messages
+
+    def decrypt(encrypted_message, key):
+        fernet = Fernet(key)
+        decrypted_message = fernet.decrypt(encrypted_message).decode()
+        return decrypted_message
 
     def send_message_to_db(self, sender, recipient, message, password):
         salt = os.urandom(16)
@@ -35,11 +41,9 @@ class Operation:
         for msg in messages:
             messages_found = True
             print(f"Você tem uma mensagem de {msg['from']}.")
-            show_message = input("Você gostaria de ver a mensagem? (sim/não): ").strip().lower()
+            show_message = input("Você gostaria de ver a mensagem? (s/n): ").strip().lower()
 
-            if show_message == 'sim':
-                print(f"Mensagem criptografada: {msg['message']}")
-
+            if show_message == 's':
                 salt = urlsafe_b64decode(msg['salt'])
                 key = derive_key_from_password(password, salt)
 
@@ -49,8 +53,11 @@ class Operation:
         if not messages_found:
             print("Nenhuma nova mensagem recebida.")
 
-        send_new_message = input("Você gostaria de enviar uma nova mensagem? (sim/não): ").strip().lower()
-        return send_new_message == 'sim'
+        send_new_message = input("Você gostaria de enviar uma nova mensagem? (s/n): ").strip().lower()
+        if send_new_message == 's':
+            return True
+        else:
+            return False
 
     def login(self):
         while True:
