@@ -1,5 +1,15 @@
 from Database.mongohandler import Operation
-from Database.utils import derive_key_from_password  # Use o caminho correto para utils
+
+
+
+#integrantes do grupo
+# Erico Conte Tezoto - 23004160
+# Caio Acosta - 23008203
+# João Gabriel Biazon - 23004430
+
+
+
+
 
 def chat(operation, user_email, password):
     recipient = input("Digite o e-mail do destinatário: ")
